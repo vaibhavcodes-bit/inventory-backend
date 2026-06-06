@@ -1,6 +1,5 @@
-# Order schemas for request and response validation
+from pydantic import BaseModel
 
-from pydantic import BaseModel, Field
 
 class OrderCreate(BaseModel):
 
@@ -8,10 +7,15 @@ class OrderCreate(BaseModel):
 
     product_id: int
 
-    quantity: int = Field(
-        gt=0,
-        description="Order quantity must be greater than 0"
-    )
+    quantity: int
+
+
+class OrderUpdate(BaseModel):
+
+    customer_id: int | None = None
+
+    quantity: int | None = None
+
 
 class OrderResponse(BaseModel):
 
