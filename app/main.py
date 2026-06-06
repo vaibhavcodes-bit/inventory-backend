@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base
 from app.database import engine
@@ -11,12 +12,29 @@ from app.routes.products import router as product_router
 from app.routes.customers import router as customer_router
 from app.routes.orders import router as order_router
 
+
+# Create database tables
 Base.metadata.create_all(bind=engine)
 
+
 app = FastAPI(
-    title="Inventory Management API"
+    title="Inventory Management API",
+    version="1.0.0",
+    description="Inventory & Order Management System API"
 )
 
+
+# CORS Configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Change to Vercel URL in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# Register Routes
 app.include_router(product_router)
 app.include_router(customer_router)
 app.include_router(order_router)
@@ -25,5 +43,14 @@ app.include_router(order_router)
 @app.get("/")
 def root():
     return {
-        "message": "Inventory API Running"
+        "message": "Inventory API Running",
+        "docs": "/docs",
+        "status": "success"
+    }
+
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "healthy"
     }
